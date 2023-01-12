@@ -1,6 +1,6 @@
-
+//json-server --watch ./buscaminas/usuarios.json
 const request = new XMLHttpRequest();
-request.open('GET', ' http://localhost:3000/usuarios', true);
+request.open('GET', 'http://localhost:3000/usuarios', true);
 
 request.onload = function () {
   if (request.status >= 200 && request.status < 400) {
@@ -24,14 +24,14 @@ request.onload = function () {
       cuerpoTarjeta.setAttribute('class', 'card-body');
 
       // Creamos el encabezado y le asignamos el título de la película
-      const usuario = document.createElement('h5');
+      const nombre = document.createElement('h5');
       nombre.setAttribute('class', 'card-nombre');
       nombre.textContent = `Nombre real: ${usuarios.usuario}`;
 
       // Creamos la párrafo y le asignamos la descripción de la película
       const descripcion = document.createElement('p');
       descripcion.setAttribute('class', 'card-usuario');
-      descripcion.textContent = `Usuario: ${usuarios.usuario } & Contraseña: ${usuarios.pwd }`;
+      descripcion.textContent = `Usuario: ${usuarios.usuario } & Contraseña: ${usuarios.password }`;
 
       // Agregamos la tarjeta
       contenedor.appendChild(tarjeta);
