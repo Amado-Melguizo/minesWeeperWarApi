@@ -24,9 +24,9 @@ request.onload = function () {
       cuerpoTarjeta.setAttribute('class', 'card-body');
 
       // Creamos el encabezado y le asignamos el título de la película
-      const nombre = document.createElement('h5');
+      const usuario = document.createElement('h5');
       nombre.setAttribute('class', 'card-nombre');
-      nombre.textContent = `Nombre real: ${usuarios.nombre}`;
+      nombre.textContent = `Nombre real: ${usuarios.usuario}`;
 
       // Creamos la párrafo y le asignamos la descripción de la película
       const descripcion = document.createElement('p');
