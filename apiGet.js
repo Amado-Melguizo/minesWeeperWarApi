@@ -1,6 +1,6 @@
 //json-server --watch ./buscaminas/usuarios.json
 const request = new XMLHttpRequest();
-request.open('GET', 'http://localhost:3000/usuarios', true);
+request.open('GET', 'https://amado-melguizo.github.io/minesWeeperWarApi/', true);
 
 request.onload = function () {
   if (request.status >= 200 && request.status < 400) {
