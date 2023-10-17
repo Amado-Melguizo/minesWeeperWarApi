@@ -1,4 +1,4 @@
-const RegisterForm = document.querySelector("#register");
+//const RegisterForm = document.querySelector("#register");
 
 //RegisterForm.addEventListener("submit", function (event) {
   // Stop the default submit and page load
