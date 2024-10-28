@@ -1,2 +1,2 @@
-# minesWeeperWarApi
-https://amado-melguizo.github.io/minesWeeperWarApi/
+# acuearelasAnaApi
+https://amado-melguizo.github.io/acuarelasanaApi/

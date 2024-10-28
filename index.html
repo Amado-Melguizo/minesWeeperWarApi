@@ -1,58 +1,117 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>Tutorial API JavaScript</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script type="text/javascript" defer src="./apiGet.js"></script>
-    <script type="text/javascript" defer src="./apiPost.js"></script>
-
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-    />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Fotos</title>
     <style>
-      body {
-        display: flex;
-        flex-direction: column-reverse;
-        flex-wrap: wrap;
-        align-items: center;
-        align-content: center;
-      }
-      .item {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-      }
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; }
+        .photo-block { margin-top: 20px; }
+        .photo-block h2 { text-transform: uppercase; font-size: 1.5em; border-bottom: 2px solid #333; padding-bottom: 5px; }
+        .photo { margin: 10px 0; display: inline-block; }
+        .photo img { 
+            max-width: 150px;
+            max-height: 150px;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            border-radius: 8px;
+        }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1 class="text-center pt-5 pb-4">Lista de usuarios</h1>
-      <hr />
-      <div id="contenedor"></div>
-    </div>
-    <form action="" id="register" method="post">
-      <h1>Register</h1>
-      <p class="item">
-        <label for="usuario"> Usuario </label>
-        <input type="text" name="usuario" id="usuario" />
-      </p>
-      <p class="item">
-        <label for="password"> Password </label>
-        <input type="password" name="password" id="password" />
-      </p>
-      <p class="item">
-        <input type="submit" value="submit" />
-      </p>
+</head>
+<body>
+    <h1>Galería de Fotos</h1>
+
+    <h2>Subir una nueva foto</h2>
+    <form id="photoForm">
+        <input type="text" id="title" placeholder="Título" required><br><br>
+        <input type="file" id="file" accept="image/*" required><br><br>
+
+        <!-- Menú desplegable de tipo de pintura -->
+        <select id="paintingType" required>
+            <option value="" disabled selected>Selecciona el tipo de pintura</option>
+            <option value="Animales">Animales</option>
+            <option value="Botánica">Botánica</option>
+            <option value="Naturaleza">Naturaleza</option>
+            <option value="Playa">Playa</option>
+            <option value="Veleros">Veleros</option>
+        </select>
+
+        <button type="submit">Subir foto</button>
     </form>
-  </body>
+
+    <div id="photoGalleryContainer">
+        <!-- Aquí se mostrarán las fotos agrupadas por tipo -->
+    </div>
+
+    <script>
+        const apiURL = 'http://localhost:3000/photos';
+
+        // Función para cargar fotos y organizarlas en bloques
+        async function loadPhotos() {
+            const response = await fetch(apiURL);
+            const photos = await response.json();
+            const galleryContainer = document.getElementById('photoGalleryContainer');
+            galleryContainer.innerHTML = '';
+
+            // Organiza las fotos en bloques por tipo
+            const groupedPhotos = photos.reduce((groups, photo) => {
+                if (!groups[photo.type]) groups[photo.type] = [];
+                groups[photo.type].push(photo);
+                return groups;
+            }, {});
+
+            // Crear bloques por cada tipo de pintura
+            for (const [type, photos] of Object.entries(groupedPhotos)) {
+                const block = document.createElement('div');
+                block.className = 'photo-block';
+                block.innerHTML = `<h2>${type}</h2>`;
+
+                photos.forEach(photo => {
+                    const div = document.createElement('div');
+                    div.className = 'photo';
+                    div.innerHTML = `
+                        <h3>${photo.title}</h3>
+                        <img src="${photo.url}" alt="${photo.title}">
+                    `;
+                    block.appendChild(div);
+                });
+
+                galleryContainer.appendChild(block);
+            }
+        }
+
+        loadPhotos();
+
+        function encodeImageFileAsURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        document.getElementById('photoForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const title = document.getElementById('title').value;
+            const fileInput = document.getElementById('file');
+            const file = fileInput.files[0];
+            const paintingType = document.getElementById('paintingType').value;
+
+            if (file) {
+                const base64Image = await encodeImageFileAsURL(file);
+
+                await fetch(apiURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, url: base64Image, type: paintingType })
+                });
+
+                loadPhotos();
+                document.getElementById('photoForm').reset();
+            }
+        });
+    </script>
+</body>
 </html>
